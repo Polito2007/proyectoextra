@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hoy No Circula</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #e0c3fc, #8ec5fc); /* Fondo suave y moderno */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            height: 100vh;
+            color: #333333; /* Color de texto oscuro */
+        }
+        header {
+            width: 100%;
+            background-color: #4a4e69; /* Color oscuro y elegante para el encabezado */
+            color: #ffffff;
+            text-align: center;
+            padding: 40px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Sombra sutil para el encabezado */
+        }
+        header h1 {
+            font-family: 'Georgia', serif;
+            font-size: 3.8rem;
+            margin: 0;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        .container {
+            text-align: center;
+            background-color: #ffffff; /* Fondo blanco limpio */
+            border-radius: 16px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra moderna */
+            padding: 30px;
+            margin-top: 30px;
+            display: inline-block;
+            max-width: 90%;
+        }
+        .button-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            margin: 15px 0;
+        }
+        .button-container img {
+            width: 50px;
+            height: 20px;
+            margin-right: 5px;
+            border-radius: 50px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .button-container a {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4a4e69; /* Color vibrante y cálido para los botones */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .button-container a:hover {
+            background-color: #4a4e69; /* Color más fuerte en el hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px); /* Efecto de elevación al pasar el cursor */
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+            z-index: 1000;
+            text-align: center;
+        }
+        .modal p {
+            margin: 0 0 20px;
+            font-size: 1.2rem;
+            color: #333;
+        }
+        .modal button {
+            background-color: #4a4e69;
+            border: none;
+            padding: 12px 25px;
+            color: white;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+        }
+        .modal button:hover {
+            background-color: #45a049;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px); /* Efecto de elevación */
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        img {
+            width: 30%;
+            height: auto;
+            margin-top: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave para la imagen */
+        }
+        .button-container a {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4a4e69; /* Color vibrante y cálido para los botones */
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .button-container a:hover {
+            background-color: #4a4e69; /* Color más fuerte en el hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            transform: translateY(-5px); /* Efecto de elevación al pasar el cursor */
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4a4e69; /* Color de fondo */
+            color: white;
+            text-decoration: none;
+            border-radius: 16px; /* Bordes redondeados */
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.3s ease; /* Transición suave para el hover */
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #4a4e69; /* Color de fondo en hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte en hover */
+            transform: translateY(-5px); /* Efecto de elevación */
+        }
+        video.background-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.4;
+            filter: brightness(100%);
+        }
+        .btn-submit {
+            padding: 12px 30px;
+            background-color: #4a4e69; /* Color de fondo elegante */
+            color: white;
+            border: none;
+            border-radius: 16px; /* Bordes redondeados */
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease; /* Transición suave para el hover */
+            box-shadow: 0 5px 8px rgba(0, 0, 0, 0.1); /* Sombra suave */
+        }
+        .btn-submit:hover {
+            background-color: #4a4e69; /* Cambio de color en hover */
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2); /* Sombra más fuerte en hover */
+            transform: translateY(-5px); /* Efecto de elevación en hover */
+        }
+        .btn-submit:active {
+            background-color: #4a4e69; /* Color más fuerte al hacer clic */
+            transform: translateY(0); /* Restablecer el efecto de elevación al hacer clic */
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hoy No Circula</h1>
+    </header>
+    <div class="container">
+        <h2>Verificar "Hoy No Circula"</h2>
+        <form id="placaForm">
+            <label for="placa">Placa del vehículo:</label>
+            <input type="text" name="placa" id="placa" required>
+            <label for="dia">Día:</label>
+            <input type="text" name="dia" id="dia" required>
+            <button type="submit" class="btn-submit">Verificar</button>
+        </form>
+        <div class="info-section">
+            <h2>¿Qué es el programa "Hoy No Circula"?</h2>
+            <p>El programa "Hoy No Circula" es una iniciativa en México que regula la circulación de vehículos en áreas urbanas para reducir la contaminación ambiental. Dependiendo del número final de la placa, el día y las reglas del programa, algunos vehículos no pueden circular en ciertas fechas.</p>
+        </div>
+        <a href="{{ url_for('index') }}" class="button">Volver al inicio</a>
+        <img src="/static/static/images/hoy_no_circula.png" alt="Imagen de coche">
+</div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="modal" id="modal">
+        <p id="modalMessage"></p>
+        <button id="closeModal">Cerrar</button>
+    </div>
+    <script>
+        document.getElementById("placaForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const placa = document.getElementById("placa").value;
+            const dia = document.getElementById("dia").value;
+            fetch("/verificar_hoy_no_circula", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `placa=${encodeURIComponent(placa)}&dia=${encodeURIComponent(dia)}`,
+            })
+                .then((response) => response.text())
+                .then((message) => {
+                    document.getElementById("modalMessage").innerText = message;
+                    document.getElementById("overlay").style.display = "block";
+                    document.getElementById("modal").style.display = "block";
+                })
+                .catch((error) => console.error("Error:", error));
+        });
+        document.getElementById("closeModal").addEventListener("click", function () {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("modal").style.display = "none";
+        });
+    </script>
+</body>
+</html>

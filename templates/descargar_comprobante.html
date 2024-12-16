@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprobante de Cita</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .comprobante {
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .detalle {
+            margin: 20px 0;
+        }
+        .detalle p {
+            font-size: 1.2rem;
+        }
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div class="comprobante">
+        <h1>Comprobante de Cita</h1>
+        <div class="detalle">
+            <p><strong>Placa:</strong> {{ cita.placa }}</p>
+            <p><strong>Modelo:</strong> {{ cita.modelo }}</p>
+            <p><strong>Serie:</strong> {{ cita.serie }}</p>
+            <p><strong>Fecha de la Cita:</strong> {{ cita.fecha_cita }}</p>
+            <p><strong>Hora de la Cita:</strong> {{ cita.hora_cita }}</p>
+            <p><strong>Hora del Registro:</strong> {{ cita.hora_registro }}</p>
+        </div>
+        <div class="footer">
+            <p>Gracias por usar nuestros servicios.</p>
+        </div>
+    </div>
+</body>
+</html>

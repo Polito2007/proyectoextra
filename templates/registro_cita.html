@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar Cita</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #d1c4e9, #b2a2d7);
+            font-family: 'Poppins', sans-serif;
+            color: #444;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100vh;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4a4e69,#4a4e69);
+            padding: 30px 0;
+            text-align: center;
+            color: #fff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #f1f1f1;
+        }
+        
+        .main-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 600px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            backdrop-filter: blur(8px);
+            width: 48%;
+            transition: transform 0.3s ease-in-out;
+        }
+        
+        .container:hover {
+            transform: translateY(-5px);
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+            color: #5d576b;
+            font-weight: 600;
+        }
+        
+        input[type="text"], input[type="email"], input[type="date"], select {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 2px solid #c1b2e1;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            background: #f3e6f7;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        input:focus, select:focus {
+            border-color: #a28ab5;
+            box-shadow: 0 0 8px rgba(162, 138, 181, 0.5);
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #4a4e69);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        
+        button:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .calendar-container {
+            width: 45%;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        
+        .calendar-controls button {
+            background-color: #4a4e69;
+            color: white;
+            border: none;
+            padding: 7px 14px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .calendar-controls button:hover {
+            background-color: #4a4e69;
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            padding: 12px;
+            text-align: center;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+        
+        .past {
+            background-color: #4a4e69;
+            color: grey;
+        }
+        
+        .available {
+            background-color: #d4edda;
+            cursor: pointer;
+        }
+        
+        .unavailable {
+            background-color: #f1f1f1;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        
+        @media (max-width: 768px) {
+            .main-container {
+                flex-direction: column;
+                align-items: center;
+            }
+            .container, .calendar-container {
+                width: 90%;
+                margin-bottom: 20px;
+            }
+            header h1 {
+                font-size: 2rem;
+            }
+        }
+        
+        .toast {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 99, 71, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            font-weight: 600;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 30px;
+            border: 1px solid #ccc;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .calendar-day-header {
+            font-weight: 600;
+            color: #333;
+            background-color: #f1f1f1;
+            padding: 1px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        #next-month {
+            background-color: #ff8585;
+            color: #fff;  /* Para asegurarnos de que el texto sea legible */
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        
+        #next-month:hover {
+            box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3);
+            transform: translateY(-3px);
+        }
+        #next-month {
+            background-color: #4a4e69;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        #next-month:hover {
+            background-color: #3f4963;
+            transform: translateY(-3px);
+        }
+        
+        #next-month:active {
+            transform: translateY(0);
+        }
+        button[type="submit"] {
+            background-color: #4a4e69;
+            color: #fff;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #3f4963;
+            transform: translateY(-3px);
+        }
+        
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+        .button-link {
+            display: inline-block;
+            background-color: #4a4e69;
+            color: #fff;
+            text-align: center;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1.2rem;
+            text-decoration: none; /* Elimina el subrayado */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .button-link:hover {
+            background-color: #3f4963;
+            transform: translateY(-3px);
+        }
+        
+        .button-link:active {
+            transform: translateY(0);
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p id="modalMessage"></p>
+        </div>
+    </div>
+    <header>
+        <h1>Registrar Cita</h1>
+    </header>
+    <div class="main-container">
+        <div class="calendar-container">
+            <div class="calendar-controls">
+                <button id="prev-month">«</button>
+                <span id="current-month">Mes Año</span>
+                <button id="next-month">»</button>
+            </div>
+            <div class="calendar-header">
+                <div class="calendar-day-header">Domingo</div>
+                <div class="calendar-day-header">Lunes</div>
+                <div class="calendar-day-header">Martes</div>
+                <div class="calendar-day-header">Miércoles</div>
+                <div class="calendar-day-header">Jueves</div>
+                <div class="calendar-day-header">Viernes</div>
+                <div class="calendar-day-header">Sábado</div>
+            </div>
+            <div class="calendar-grid"></div>
+        </div>
+    <div class="container">
+        <form method="POST" action="{{ url_for('registro_cita') }}">
+            <label for="placa">Placa:</label>
+            <input type="text" name="placa" placeholder="Placa" required>
+            <label for="confirm_placa">Confirmar Placa:</label>
+            <input type="text" name="confirm_placa" required>
+            <label for="serie">Serie:</label>
+            <input type="text" name="serie" placeholder="Serie" required>
+            <label for="confirm_serie">Confirmar Serie:</label>
+            <input type="text" name="confirm_serie" required>
+            <label for="modelo">Modelo:</label>
+            <input type="text" name="modelo" placeholder="Modelo" required>
+            <label for="correo_electronico">Correo Electrónico:</label>
+            <input type="email" name="correo_electronico" required>
+            <label for="fecha_cita">Fecha de la Cita:</label>
+            <input type="date" name="fecha_cita" required>
+            <label for="fecha_cita">Hora de la Cita:</label>
+            <select id="hora_cita" name="hora_cita" required>
+                <option value="">Selecciona Hora</option>
+                {% for hora in ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00"] %}
+                    <option value="{{ hora }}" 
+                        {% if hora in horas_ocupadas %}disabled style="color: grey;"{% endif %}>
+                        {{ hora }}
+                    </option>
+                {% endfor %}
+            </select>            
+            <button type="submit">Registrar Cita</button>
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <ul>
+                        {% for category, message in messages %}
+                            <li class="{{ category }}">{{ message }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            {% endwith %}
+            <a href="{{ url_for('index') }}" class="button-link">Volver al inicio</a>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function showModal(message) {
+                $("#modalMessage").text(message);
+                $("#messageModal").css("display", "block");
+            }
+            $("#closeModal").click(function() {
+                $("#messageModal").css("display", "none");
+            });
+            window.onclick = function(event) {
+                if (event.target == document.getElementById('messageModal')) {
+                    $("#messageModal").css("display", "none");
+                }
+            }
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        showModal(message);
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </script>
+    </div>
+    </div>
+    <div id="toast" class="toast">
+        {{ error_message }}
+    </div>
+    <script>
+        {% if error_message %}
+            document.getElementById('toast').style.display = 'block';
+            setTimeout(function() {
+                document.getElementById('toast').style.display = 'none';
+            }, 3000);
+        {% endif %}
+    </script>
+    <script>
+        const today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        const currentMonthSpan = document.getElementById('current-month');
+        const grid = document.querySelector('.calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        let occupiedDates = JSON.parse(localStorage.getItem('occupiedDates')) || [];
+        function renderCalendar(month, year) {
+            grid.innerHTML = "";
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const currentTime = new Date();
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            currentMonthSpan.textContent = `${monthNames[month]} ${year}`;
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement("div");
+                grid.appendChild(emptyCell);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dayElement = document.createElement("div");
+                dayElement.textContent = day;
+                dayElement.classList.add("calendar-day");
+                const dateStr = date.toISOString().split("T")[0];
+                if (date < today || (date.toDateString() === today.toDateString() && currentTime.getHours() >= 16)) {
+                    dayElement.classList.add("past");
+                    dayElement.classList.add("unavailable");
+                } 
+                else if (date.getDay() === 0 || date.getDay() === 6) { 
+                    dayElement.classList.add("unavailable");
+                    dayElement.classList.add("disabled");
+                } 
+                else {
+                    if (occupiedDates.includes(dateStr)) {
+                        dayElement.classList.add("unavailable");
+                    } else {
+                        dayElement.classList.add("available");
+                        dayElement.addEventListener("click", () => {
+                            const dateStr=date.toISOString().split("T")[0];
+                            document.querySelector('[name="fecha_cita"]').value=dateStr;
+                        });
+                    }
+                }
+                grid.appendChild(dayElement);
+            }
+        }
+        prevMonthBtn.addEventListener("click", () => {
+            if (currentYear > today.getFullYear() || currentMonth > today.getMonth()) {
+                currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+                currentYear = (currentMonth === 11) ? currentYear - 1 : currentYear;
+                renderCalendar(currentMonth, currentYear);
+            }
+        });
+        nextMonthBtn.addEventListener("click", () => {
+            currentMonth = (currentMonth + 1) % 12;
+            currentYear = (currentMonth === 0) ? currentYear + 1 : currentYear;
+            renderCalendar(currentMonth, currentYear);
+        });
+        renderCalendar(currentMonth, currentYear);
+    </script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+    <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calendario</title>
+    <style>
+        /* Fondo y estilo base */
+        body {
+            background: linear-gradient(135deg, #f9c0ff, #f1c6f1); /* Degradado suave en tonos pastel */
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #4a4e69;
+        }
+
+        /* Título principal */
+        h1 {
+            margin-top: 20px;
+            font-size: 3rem;
+            font-family: 'Georgia', serif;
+            color: #6d6875;
+        }
+
+        /* Estilo del formulario */
+        form {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+            width: 90%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        label {
+            color: #6d6875;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* Estilo del campo de fecha */
+        input[type="date"] {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: 1px solid #c9ada7;
+            border-radius: 8px;
+            background-color: #f2e9e4;
+            color: #4a4e69;
+            font-size: 1rem;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #9a8c98;
+            box-shadow: 0 0 5px rgba(154, 140, 152, 0.5);
+        }
+
+        /* Estilo del botón */
+        button {
+            background-color: #ff6f61; /* Color cálido pastel */
+            border: none;
+            border-radius: 8px;
+            color: white;
+            padding: 12px 24px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #f56f61; /* Color ligeramente más intenso */
+        }
+
+        /* Estilo de la tabla */
+        table {
+            width: 90%;
+            max-width: 600px;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #c9ada7;
+        }
+
+        th {
+            background-color: #ff9a9a; /* Color de fondo para los encabezados */
+            color: white;
+        }
+
+        td {
+            background-color: #f2e9e4;
+            cursor: pointer;
+        }
+
+        td:hover {
+            background-color: #ff9a9a;
+            color: white;
+        }
+
+        /* Estilo para los días pasados */
+        .past-day {
+            background-color: #e8e8e8;
+            color: #a5a5a5;
+            pointer-events: none;
+        }
+
+        /* Título para la fecha seleccionada */
+        h3 {
+            margin: 20px;
+            font-size: 1.3rem;
+            color: #4a4e69;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Calendario</h1>
+    
+    <!-- Formulario para registrar cita -->
+    <form action="/cambiar_fecha" method="POST">
+        <label for="fecha_cita">Fecha de Cita:</label>
+        <input type="date" id="fecha_cita" name="fecha_cita" required>
+        <button type="submit">Registrar Cita</button>
+    </form>
+
+    <!-- Tabla de calendario -->
+    <div>
+        <h2>Calendario</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Lun</th>
+                    <th>Mar</th>
+                    <th>Mié</th>
+                    <th>Jue</th>
+                    <th>Vie</th>
+                    <th>Sáb</th>
+                    <th>Dom</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for week in calendar_data %}
+                    <tr>
+                        {% for day in week %}
+                            <td class="day {{ 'past-day' if day == 0 else '' }}" onclick="selectDay({{ day }})">
+                                {{ day if day != 0 else '' }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Fecha seleccionada -->
+    <h3>Seleccionada: <span id="selected_date">Ninguna</span></h3>
+
+    <script>
+        function selectDay(day) {
+            const year = {{ year }};
+            const month = {{ month }};
+            const selectedDate = new Date(year, month - 1, day);
+            document.getElementById('selected_date').innerText = selectedDate.toLocaleDateString();
+        }
+    </script>
+</body>
+</html>

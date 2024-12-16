@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <style>
+        body { 
+            background: linear-gradient(135deg, #d4c6e0, #a6c1ee); /* Suave gradiente pastel */
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4a4e69, #5d576b); /* Tono oscuro y elegante */
+            padding: 20px 0;
+            text-align: center;
+            color: #fff;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 3rem; /* Tamaño más grande para resaltar */
+            font-weight: 600;
+            color: #fff; /* Color blanco para resaltar sobre el fondo oscuro */
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1); /* Sombra suave */
+            width: 85%;
+            margin: 30px 0;
+        }
+        
+        h2 {
+            color: #4a4e69; /* Color que armoniza con el encabezado */
+            font-size: 1.6rem; /* Aumentado para mejor legibilidad */
+            margin-bottom: 15px;
+        }
+        
+        label {
+            font-size: 1.1rem;
+            color: #4a4e69; /* Color para etiquetas */
+            font-weight: 500;
+            display: block;
+            margin-bottom: 12px;
+        }
+        
+        input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #4a4e69);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        
+        button:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+        
+        table thead {
+            background: linear-gradient(90deg, #4a4e69, #4a4e69);
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        table th, table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        table tbody tr:hover {
+            background: #f1f1f1;
+        }
+        
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            color: #f28d83;
+            font-weight: 600;
+        }
+        
+        a:hover {
+            color: #e75f5f;
+            text-decoration: underline;
+        }
+        
+        .main-container {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            max-width: 1200px;
+            margin: 30px auto;
+        }
+        
+        .calendar-container {
+            width: 48%;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 18px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+        
+        .calendar-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .calendar-controls button {
+            background-color: #5d76a9;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 6px;
+        }
+        
+        .calendar-header {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        
+        .calendar-day-header {
+            font-weight: 600;
+            color: #333;
+            background-color: #f8f8f8;
+            padding: 0px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+        
+        .calendar-day {
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .calendar-day:hover {
+            transform: translateY(-2px);
+        }
+        
+        .past {
+            background-color: #f8d7da;
+            color: grey;
+        }
+        
+        .available {
+            background-color: #d4edda;
+            cursor: pointer;
+        }
+        
+        .unavailable {
+            background-color: #f1f1f1;
+            color: #aaa;
+            cursor: not-allowed;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            background-color: #4a4e69;
+            color: white;
+            text-align: center;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+        
+        .btn:hover {
+            background-color: #5741d9;
+            transform: translateY(-2px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Panel de Administración</h1>
+    </header>
+    <div class="main-container">
+        <div class="calendar-container">
+            <div class="calendar-controls">
+                <button id="prev-month">«</button>
+                <span id="current-month">Mes Año</span>
+                <button id="next-month">»</button>
+            </div>
+            <div class="calendar-header">
+                <div class="calendar-day-header">Domingo</div>
+                <div class="calendar-day-header">Lunes</div>
+                <div class="calendar-day-header">Martes</div>
+                <div class="calendar-day-header">Miércoles</div>
+                <div class="calendar-day-header">Jueves</div>
+                <div class="calendar-day-header">Viernes</div>
+                <div class="calendar-day-header">Sábado</div>
+            </div>
+            <div class="calendar-grid"></div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        const today = new Date();
+        let currentMonth = today.getMonth();
+        let currentYear = today.getFullYear();
+        const currentMonthSpan = document.getElementById('current-month');
+        const grid = document.querySelector('.calendar-grid');
+        const prevMonthBtn = document.getElementById('prev-month');
+        const nextMonthBtn = document.getElementById('next-month');
+        let occupiedDates = JSON.parse(localStorage.getItem('occupiedDates')) || [];
+        function renderCalendar(month, year) {
+            grid.innerHTML = "";
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const currentTime = new Date();
+            const monthNames = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+            currentMonthSpan.textContent = `${monthNames[month]} ${year}`;
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement("div");
+                grid.appendChild(emptyCell);
+            }
+            for (let day = 1; day <= daysInMonth; day++) {
+                const date = new Date(year, month, day);
+                const dayElement = document.createElement("div");
+                dayElement.textContent = day;
+                dayElement.classList.add("calendar-day");
+                const dateStr = date.toISOString().split("T")[0];
+                if (date < today || (date.toDateString() === today.toDateString() && currentTime.getHours() >= 16)) {
+                    dayElement.classList.add("past");
+                    dayElement.classList.add("unavailable");
+                } else if (date.getDay() === 0 || date.getDay() === 6) { 
+                    dayElement.classList.add("unavailable");
+                    dayElement.classList.add("disabled");
+                } else {
+                    if (occupiedDates.includes(dateStr)) {
+                        dayElement.classList.add("unavailable");
+                    } else {
+                        dayElement.classList.add("available");
+                    }
+                    dayElement.addEventListener("click", () => {
+                        if (dayElement.classList.contains("available")) {
+                            dayElement.classList.remove("available");
+                            dayElement.classList.add("unavailable");
+                            occupiedDates.push(dateStr);
+                        } else if (dayElement.classList.contains("unavailable")) {
+                            dayElement.classList.remove("unavailable");
+                            dayElement.classList.add("available");
+                            occupiedDates = occupiedDates.filter(date => date !== dateStr);
+                        }
+                        localStorage.setItem('occupiedDates', JSON.stringify(occupiedDates));
+                    });
+                }
+                grid.appendChild(dayElement);
+            }
+        }
+        prevMonthBtn.addEventListener("click", () => {
+            if (currentYear > today.getFullYear() || currentMonth > today.getMonth()) {
+                currentMonth = (currentMonth === 0) ? 11 : currentMonth - 1;
+                currentYear = (currentMonth === 11) ? currentYear - 1 : currentYear;
+                renderCalendar(currentMonth, currentYear);
+            }
+        });
+        nextMonthBtn.addEventListener("click", () => {
+            currentMonth = (currentMonth + 1) % 12;
+            currentYear = (currentMonth === 0) ? currentYear + 1 : currentYear;
+            renderCalendar(currentMonth, currentYear);
+        });
+        renderCalendar(currentMonth, currentYear);
+    </script>
+    <a href="{{ url_for('registro_cita') }}" class="btn">ir a Registrar Cita - Comprobar
+    </a>
+</body>
+</html>
+<div class="container">
+    <h2>Registros de Citas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Placa</th>
+                <th>Serie</th>
+                <th>Modelo</th>
+                <th>Correo Electrónico</th>
+                <th>Fecha de Cita</th>
+                <th>Hora de Cita</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cita in registros %}
+                <tr>
+                    <td>{{ cita['Placa'] }}</td>
+                    <td>{{ cita['Serie'] }}</td>
+                    <td>{{ cita['Modelo'] }}</td>
+                    <td>{{ cita['Correo_Electronico'] }}</td>
+                    <td>{{ cita['Fecha_Cita'] }}</td>
+                    <td>{{ cita['Hora_Cita'] }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('index') }}" class="btn">Volver al inicio</a>
+</div>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Administración</title>
+    <style>
+        /* Estilos previos de la página */
+        body { 
+            background: linear-gradient(135deg, #d4c6e0, #a6c1ee);
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4a4e69, #5d576b);
+            padding: 20px 0;
+            text-align: center;
+            color: #fff;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        header h1 {
+            margin: 0;
+            font-size: 3rem;
+            font-weight: 600;
+            color: #fff;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+            width: 85%;
+            margin: 30px 0;
+        }
+        
+        h2 {
+            color: #4a4e69;
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+        }
+        
+        label {
+            font-size: 1.1rem;
+            color: #4a4e69;
+            font-weight: 500;
+            display: block;
+            margin-bottom: 12px;
+        }
+        
+        input[type="text"], input[type="date"], input[type="time"] {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        button {
+            width: 100%;
+            padding: 16px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #4a4e69);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.2s ease, box-shadow 0.3s ease;
+        }
+        
+        button:hover {
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+            transform: translateY(-4px);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 25px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+        }
+        
+        table thead {
+            background: linear-gradient(90deg, #4a4e69, #4a4e69);
+            color: #fff;
+            font-size: 1.1rem;
+        }
+        
+        table th, table td {
+            padding: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        
+        table tbody tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+        
+        table tbody tr:hover {
+            background: #f1f1f1;
+        }
+        
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            color: #f28d83;
+            font-weight: 600;
+        }
+        
+        a:hover {
+            color: #e75f5f;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mostrar Datos de Citas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+
+    <!-- Botón para mostrar los datos de citas -->
+    <button id="loadDataBtn" class="btn">Mostrar Datos de Citas</button>
+
+    <!-- Contenedor de datos, inicialmente oculto -->
+    <div id="dataContainer" style="display:none;">
+        <h2>Registros de Citas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Placa</th>
+                    <th>Serie</th>
+                    <th>Modelo</th>
+                    <th>Correo Electrónico</th>
+                    <th>Fecha de Cita</th>
+                    <th>Hora de Cita</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cita in registros %}
+                    <tr>
+                        <td>{{ cita['Placa'] }}</td>
+                        <td>{{ cita['Serie'] }}</td>
+                        <td>{{ cita['Modelo'] }}</td>
+                        <td>{{ cita['Correo_Electronico'] }}</td>
+                        <td>{{ cita['Fecha_Cita'] }}</td>
+                        <td>{{ cita['Hora_Cita'] }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Al hacer clic en el botón, mostrar u ocultar los datos de citas
+            $('#loadDataBtn').click(function() {
+                $('#dataContainer').toggle();  // Muestra u oculta el contenedor de datos
+            });
+        });
+    </script>
+
+</body>
+</html>
